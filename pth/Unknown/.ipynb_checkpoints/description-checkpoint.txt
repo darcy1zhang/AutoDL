@@ -1,0 +1,15 @@
+2S_4.8.pth
+以下这个模型预测S的参数，最终预测mae为4.8。模型的输入只有与S有关的H，x1，x2.
+class MLP(nn.Module):
+    def __init__(self,feature_number):
+        super(MLP, self).__init__()
+        self.seq = nn.Sequential(
+            nn.Linear(feature_number, 2*feature_number),
+            nn.ReLU(),
+            nn.Linear(2*feature_number, 2*feature_number),
+            nn.ReLU(),
+            nn.Linear(2*feature_number, 1),
+        )
+    def forward(self, x):
+        x = self.seq(x)
+        return x

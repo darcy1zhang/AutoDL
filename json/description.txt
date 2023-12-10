@@ -1,0 +1,2 @@
+用TSFEL提取48个feature，其中不包括total energy这个特征，因为有一些不知道为什么的报错
+48TSFEL.json
