@@ -43,7 +43,92 @@ class MLP(nn.Module):
     def forward(self, x):
         x = self.seq(x)
         return x
-    
+
+class VGG_contrast(nn.Module):
+    def __init__(self):
+        super(VGG_contrast, self).__init__()
+
+        self.conv1 = nn.Sequential(
+            nn.Conv1d(1, 8, 51, padding = 25),
+            nn.BatchNorm1d(8),
+            nn.LeakyReLU(),
+
+            nn.Conv1d(8, 8, 51, padding = 25),
+            nn.BatchNorm1d(8),
+            nn.LeakyReLU(),
+
+            nn.AvgPool1d(kernel_size=3, stride=2)
+        )
+
+        self.conv2 = nn.Sequential(
+            nn.Conv1d(8, 16, 51, padding = 25),
+            nn.BatchNorm1d(16),
+            nn.LeakyReLU(),
+
+            nn.Conv1d(16, 32, 51, padding = 25),
+            nn.BatchNorm1d(32),
+            nn.LeakyReLU(),
+
+            nn.AvgPool1d(kernel_size=3, stride=2)
+        )
+
+
+        self.conv3 = nn.Sequential(
+            nn.Conv1d(32, 64, 51, padding = 25),
+            nn.BatchNorm1d(64),
+            nn.LeakyReLU(),
+
+            nn.Conv1d(64, 64, 51, padding = 25),
+            nn.BatchNorm1d(64),
+            nn.LeakyReLU(),
+
+            nn.Conv1d(64, 64, 51, padding = 25),
+            nn.BatchNorm1d(64),
+            nn.LeakyReLU(),
+
+            nn.Conv1d(64, 64, 51, padding = 25),
+            nn.BatchNorm1d(64),
+            nn.LeakyReLU(),
+
+            nn.AvgPool1d(kernel_size=3, stride=2)
+        )
+
+        self.conv4 = nn.Sequential(
+            nn.Conv1d(64, 32, 5, padding = 2),
+            nn.BatchNorm1d(32),
+            nn.LeakyReLU(),
+
+            nn.Conv1d(32, 32, 5, padding = 2),
+            nn.BatchNorm1d(32),
+            nn.LeakyReLU(),
+
+            nn.Conv1d(32, 32, 5, padding = 2),
+            nn.BatchNorm1d(32),
+            nn.LeakyReLU(),
+
+            nn.Conv1d(32, 32, 5, padding = 2),
+            nn.BatchNorm1d(32),
+            nn.LeakyReLU(),
+
+            nn.AvgPool1d(kernel_size=3, stride=2)
+        )
+
+        self.fc1 = nn.Sequential(
+            nn.Dropout(0.2),
+            nn.Linear(32 * 61, 1)
+        ) 
+
+    def forward(self, x):
+        x = self.conv1(x)
+        x = self.conv2(x)
+        x = self.conv3(x)
+        x = self.conv4(x)
+
+        representation = x.view(-1, 1, 32 * 61)  # flatten the tensor
+
+        output = self.fc1(representation)
+
+        return output, representation
     
 
 class VGG(nn.Module):

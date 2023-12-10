@@ -13,6 +13,7 @@ class Dataset(Dataset):
 
     def __len__(self):
         return self.data.shape[0]
+        # return 2000
 
     def __getitem__(self, idx):
 
