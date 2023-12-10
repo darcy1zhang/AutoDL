@@ -9,7 +9,7 @@ class Dataset(Dataset):
     def __init__(self, para, s_or_d, train_or_test, unrelated_feature_number):
         self.data = np.load(para)
         self.unrelated_feature_number = unrelated_feature_number
-        train_data = np.load("../data/features_train.npy")
+        train_data = np.load("../data/features_rand_train.npy")
 
         # normalize
         mean = np.mean(train_data, axis=0)
