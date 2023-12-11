@@ -22,6 +22,20 @@ class Dataset(Dataset):
         self.train_or_test = train_or_test
         
         self.unrelated_feature = self.data[:,17:(17+unrelated_feature_number)]
+        
+        
+        if self.train_or_test == "train":
+            self.label_data = self.raw_data_train
+        else:
+            self.label_data = self.raw_data_test
+        
+        self.data = torch.from_numpy(self.data)
+        self.label_data = torch.from_numpy(self.label_data)
+        self.data = self.data.type(torch.FloatTensor)
+        self.label_data = self.label_data.type(torch.FloatTensor)
+        
+
+        
 
     def __len__(self):
         return self.data.shape[0]
@@ -35,26 +49,12 @@ class Dataset(Dataset):
         if self.unrelated_feature_number != 0:
             X_train = np.hstack((X_train,self.unrelated_feature[idx,:]))
 
-        if self.train_or_test == "train":
-            label_data = self.raw_data_train
-        else:
-            label_data = self.raw_data_test
-
         if self.s_or_d == "s":
-            Y_train = label_data[idx, 1004]
+            Y_train = self.label_data[idx, 1004]
         else:
-            Y_train = label_data[idx, 1005]
+            Y_train = self.label_data[idx, 1005]
 
-        Y_train = np.array([Y_train])
         Y_train = Y_train.reshape((1,1))
-
-        # 转为torch格式
-        X_train = np.array([X_train])
-        X_train = torch.from_numpy(X_train)
-        Y_train = torch.from_numpy(Y_train)
-        X_train = X_train.type(torch.FloatTensor)
-        Y_train = Y_train.type(torch.FloatTensor)
-
-        # Y_train = Y_train.view(Y_train.size(0), 1, 1)
+        X_train = X_train.reshape((1,-1))
 
         return X_train, Y_train
