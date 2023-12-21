@@ -2,6 +2,38 @@ import torch
 import torch.nn as nn
 # from torch.utils.tensorboard import SummaryWriter
 
+class CNN_four_layer(nn.Module):
+    def __init__(self, kernel_size):
+        super(CNN_four_layer, self).__init__()
+        self.conv = nn.Sequential(
+            nn.Conv1d(in_channels=1, out_channels=8, kernel_size=5, padding=2),
+            nn.BatchNorm1d(8),
+            nn.ReLU(),
+            nn.MaxPool1d(kernel_size=2),
+
+            nn.Conv1d(in_channels=8, out_channels=8, kernel_size=11, padding=5),
+            nn.BatchNorm1d(8),
+            nn.ReLU(),
+            nn.MaxPool1d(kernel_size=2),
+
+            nn.Conv1d(in_channels=8, out_channels=8, kernel_size=5, padding=2),
+            nn.BatchNorm1d(8),
+            nn.ReLU(),
+            nn.MaxPool1d(kernel_size=2),
+
+            nn.Conv1d(in_channels=8, out_channels=1, kernel_size=3, padding=1),
+            nn.ReLU(),
+            nn.MaxPool1d(kernel_size=2),
+        )
+        self.linear = nn.Linear(62,1)
+        
+    def forward(self,x):
+        feature = self.conv(x)
+        # print(feature.shape[-1])
+        output = self.linear(feature)
+        return output
+    
+
 class OneToOneLayer(nn.Module):
     def __init__(self, input_size):
         super(OneToOneLayer, self).__init__()
