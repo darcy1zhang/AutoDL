@@ -7,9 +7,9 @@ from sklearn.preprocessing import MinMaxScaler
 class Dataset(Dataset):
 
     def __init__(self, para, s_or_d, train_or_test, unrelated_feature_number):
-        self.data = np.load(para)
+        self.data = np.load(para).astype(np.float64)
         self.unrelated_feature_number = unrelated_feature_number
-        train_data = np.load("../data/features_rand_train.npy")
+        train_data = np.load("../data/features_rand_train.npy").astype(np.float64)
 
         # normalize
         mean = np.mean(train_data, axis=0)
@@ -17,8 +17,8 @@ class Dataset(Dataset):
         self.data = (self.data-mean)/std
 
         self.s_or_d = s_or_d
-        self.raw_data_train = np.load("../data/simu_20000_0.1_90_140_train.npy")
-        self.raw_data_test = np.load("../data/simu_10000_0.1_141_178_test.npy")
+        self.raw_data_train = np.load("../data/simu_20000_0.1_90_140_train.npy").astype(np.float64)
+        self.raw_data_test = np.load("../data/simu_10000_0.1_141_178_test.npy").astype(np.float64)
         self.train_or_test = train_or_test
         
         self.unrelated_feature = self.data[:,17:(17+unrelated_feature_number)]
@@ -31,9 +31,18 @@ class Dataset(Dataset):
         
         self.data = torch.from_numpy(self.data)
         self.label_data = torch.from_numpy(self.label_data)
-        self.data = self.data.type(torch.FloatTensor)
-        self.label_data = self.label_data.type(torch.FloatTensor)
+        # self.data = self.data.type(torch.DoubleTensor)
+        # self.label_data = self.label_data.type(torch.DoubleTensor)
         
+        if self.s_or_d == "s":
+            self.data = self.data[:, :3]
+        else:
+            self.data = self.data[:, 3:5]
+            
+        if self.s_or_d == "s":
+            self.label_data = self.label_data[:, 1004]
+        else:
+            self.label_data = self.label_data[:, 1005]
 
         
 
@@ -41,18 +50,13 @@ class Dataset(Dataset):
         return self.data.shape[0]
 
     def __getitem__(self, idx):
-        if self.s_or_d == "s":
-            X_train = self.data[idx, :3]
-        else:
-            X_train = self.data[idx, 3:5]
+
+        X_train = self.data[idx, :]
             
         if self.unrelated_feature_number != 0:
             X_train = np.hstack((X_train,self.unrelated_feature[idx,:]))
 
-        if self.s_or_d == "s":
-            Y_train = self.label_data[idx, 1004]
-        else:
-            Y_train = self.label_data[idx, 1005]
+        Y_train = self.label_data[idx]
 
         Y_train = Y_train.reshape((1,1))
         X_train = X_train.reshape((1,-1))
