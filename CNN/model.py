@@ -6,26 +6,26 @@ class CNN_four_layer(nn.Module):
     def __init__(self, kernel_size):
         super(CNN_four_layer, self).__init__()
         self.conv = nn.Sequential(
-            nn.Conv1d(in_channels=1, out_channels=8, kernel_size=5, padding=2),
-            nn.BatchNorm1d(8),
+            nn.Conv1d(in_channels=1, out_channels=4, kernel_size=4, padding=2),
+            nn.BatchNorm1d(4),
             nn.ReLU(),
             nn.MaxPool1d(kernel_size=2),
 
-            nn.Conv1d(in_channels=8, out_channels=8, kernel_size=11, padding=5),
-            nn.BatchNorm1d(8),
+            nn.Conv1d(in_channels=4, out_channels=4, kernel_size=4, padding=2),
+            nn.BatchNorm1d(4),
             nn.ReLU(),
             nn.MaxPool1d(kernel_size=2),
 
-            nn.Conv1d(in_channels=8, out_channels=8, kernel_size=5, padding=2),
-            nn.BatchNorm1d(8),
+            nn.Conv1d(in_channels=4, out_channels=4, kernel_size=4, padding=2),
+            nn.BatchNorm1d(4),
             nn.ReLU(),
             nn.MaxPool1d(kernel_size=2),
 
-            nn.Conv1d(in_channels=8, out_channels=1, kernel_size=3, padding=1),
+            nn.Conv1d(in_channels=4, out_channels=1, kernel_size=4, padding=2),
             nn.ReLU(),
             nn.MaxPool1d(kernel_size=2),
         )
-        self.linear = nn.Linear(62,1)
+        self.linear = nn.Linear(63,1)
         
     def forward(self,x):
         feature = self.conv(x)
